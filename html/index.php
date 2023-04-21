@@ -8,8 +8,8 @@
     <title>Document</title>
 </head>
 <body>
-    <p>Древовидная структура: </p>
-    <?php include "script.php" ?>
+    <p>Древовидная структура:</p>
+    <?php include "tree.php" ?>
     
 </body>
 </html>
