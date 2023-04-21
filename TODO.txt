@@ -1,0 +1,4 @@
+TODO: Create button that generates 5000 categories (and one).
+TODO: Add categories on index.php (tree view).
+TODO: Add page category.php – this page will contain path of this category.
+TODO: Bind category.php with index.php (Redirect on link).

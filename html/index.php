@@ -10,6 +10,6 @@
 <body>
     <p>Древовидная структура:</p>
     <?php include "tree.php" ?>
-    
+    <p></p>
 </body>
 </html>

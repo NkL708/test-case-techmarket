@@ -14,15 +14,13 @@ services:
 
     mysql:
         image: mysql:latest
-        ports:
-            - "3306:3306"
         volumes:
-            - ./data:/var/lib/mysql
+            - /data:/var/lib/mysql
         environment:
-            MYSQL_ROOT_PASSWORD: strongpass123
+            MYSQL_ROOT_PASSWORD: root
 
     php:
-        image: php:fpm
+        build: .
         ports:
             - "9000:9000"
         volumes:
