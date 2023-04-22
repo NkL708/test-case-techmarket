@@ -34,7 +34,7 @@ function has_child_category($categories, $category_id) {
 }
 
 function get_categories() {
-    $connection = new mysqli('mysql', 'root', 'root', 'tree');
+    $connection = new mysqli('mysql', 'root', 'root', 'mydatabase');
     $query = "SELECT * FROM categories";
     $result = mysqli_query($connection, $query);
 

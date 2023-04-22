@@ -15,10 +15,12 @@ services:
     mysql:
         image: mysql:latest
         volumes:
-            - data:/var/lib/mysql
+            - ./data:/var/lib/mysql
+            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
         environment:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: mydatabase
+        command: --init-file /docker-entrypoint-initdb.d/init.sql
     
     php:
         build: .
