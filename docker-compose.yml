@@ -15,10 +15,11 @@ services:
     mysql:
         image: mysql:latest
         volumes:
-            - /data:/var/lib/mysql
+            - data:/var/lib/mysql
         environment:
             MYSQL_ROOT_PASSWORD: root
-
+            MYSQL_DATABASE: mydatabase
+    
     php:
         build: .
         ports:
@@ -27,3 +28,6 @@ services:
             - ./html:/var/www/html
         depends_on:
             - mysql
+
+volumes:
+    data:
