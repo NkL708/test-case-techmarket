@@ -11,8 +11,10 @@
         <p>Древовидная структура:</p>
         <?php include "categories.php" ?>
     </div>
-    <button id="one">Добавить 1 случайную категорию</button>
-    <button id="many">Добавить 5000 случайных категорий</button>
-    <button id="delete">Удалить всё</button>
+    <form method="POST" action="categories.php">
+        <button name="add_one">Добавить 1 случайную категорию</button>
+        <button name="add_many">Добавить 5000 случайных категорий</button>
+        <button name="delete_many">Удалить всё</button>
+    </form>
 </body>
 </html>

@@ -1,10 +1,11 @@
 <?php
+include "database.php";
 class Category {
-    public $id;
-    public $name;
-    public $parent_id;
+    public int $id;
+    public string $name;
+    public ?int $parent_id;
 
-    public function __construct($id, $name, $parent_id) {
+    public function __construct(int $id, string $name, ?int $parent_id) {
         $this->id = $id;
         $this->name = $name;
         $this->parent_id = $parent_id;
@@ -14,41 +15,70 @@ class Category {
     }
 }
 
-function print_category_recur($categories, $parent_id = null, $level = 0) {
-    foreach ($categories as $index => $category) {
-        if ($category->parent_id == $parent_id) {
-            $category->print($level);
-            unset($categories[$index]);
-            if (has_child_category($categories, $category->id)) 
-                print_category_recur($categories, $category->id, $level + 1);
+class Categories {
+    public array $categories;
+
+    public function __construct() {
+        $this->categories = Database::get_categories();
+    }
+
+    public function print_tree($parent_id = 0, $level = 0) {
+        foreach ($this->categories as $index => $category) {
+            if ($category->parent_id == $parent_id) {
+                $category->print($level);
+                unset($this->categories[$index]);
+                if ($this->has_child_category($category->id)) 
+                    $this->print_tree($category->id, $level + 1);
+            }
         }
     }
-}
-
-function has_child_category($categories, $category_id) {
-    foreach ($categories as $category) {
-        if ($category->parent_id == $category_id)
-            return true;
-    }
-    return false;
-}
-
-function get_categories() {
-    $connection = new mysqli('mysql', 'root', 'root', 'mydatabase');
-    $query = "SELECT * FROM categories";
-    $result = mysqli_query($connection, $query);
-
-    $categories = array();
-    if (mysqli_num_rows($result) > 0) {
-        while ($row = mysqli_fetch_assoc($result)) {
-            $category = new Category($row["id"], $row["name"], $row["parent_id"]);
-            $categories[] = $category;
+    
+    public function has_child_category($category_id) {
+        foreach ($this->categories as $category) {
+            if ($category->parent_id == $category_id)
+                return true;
         }
+        return false;
     }
-    mysqli_free_result($result);
-    mysqli_close($connection);
-    return $categories;
+    private function get_max_parent_id() {
+        $max = null;
+        foreach ($this->categories as $category) {
+            if ($category->parent_id > $max)
+                $max = $category->parent_id;
+        }
+        return $max;
+    }
+
+    public function add_random_category() {
+        $id = count($this->categories) + 1;
+        $name = "Категория " . $id;
+        $parent_id = $this->get_max_parent_id() == null 
+        ? null : rand(1, $this->get_max_parent_id());
+        array_push($this->categories, new Category($id, $name, $parent_id));
+    }
+
+    public function delete_all_categories() {
+        $this->categories = array();
+    }
 }
 
-$categories = get_categories();
-print_category_recur($categories);
+$categories = new Categories();
+
+if (isset($_POST["add_one"])) {
+    $categories->add_random_category($categories);
+    Database::update_categories($categories->categories);
+}
+
+if (isset($_POST["add_many"])) {
+    for ($i = 0; $i < 5000; $i++) {
+        $categories->add_random_category($categories);
+    }
+    Database::update_categories($categories->categories);
+}
+
+if (isset($_POST["delete_many"])) {
+    $categories->delete_all_categories($categories);
+    Database::update_categories($categories->categories);
+}
+
+$categories->print_tree();
