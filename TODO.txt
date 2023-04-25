@@ -1,3 +1,0 @@
-TODO: Add page category.php – this page will contain path of this category.
-TODO: Bind category.php with index.php (Redirect on link).
-TODO: Fix all bugs :D

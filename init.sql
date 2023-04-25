@@ -1,5 +1,5 @@
 CREATE TABLE categories(
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT PRIMARY KEY,
     name VARCHAR(255),
     parent_id INT,
     FOREIGN KEY (parent_id) REFERENCES categories(id) ON DELETE CASCADE

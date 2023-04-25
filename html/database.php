@@ -5,19 +5,19 @@ class Database {
     public static function connect() {
         self::$connection = new mysqli('mysql', 'root', 'root', 'mydatabase');
         if (self::$connection->connect_error) {
-            die("Connection failed: " . self::$connection->connect_error);
+            die('Connection failed: ' . self::$connection->connect_error);
         }
     }
 
     public static function get_categories() {
         self::connect();
-        $query = "SELECT * FROM categories";
+        $query = 'SELECT * FROM categories';
 
         $result = self::$connection->query($query);
         $categories = array();
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
-                $category = new Category($row["id"], $row["name"], $row["parent_id"]);
+                $category = new Category($row['id'], $row['name'], $row['parent_id']);
                 $categories[] = $category;
             }
         }
@@ -42,7 +42,7 @@ class Database {
         }
     
         foreach ($categories_to_add as $category) {
-            self::add_category($category->name, $category->parent_id);
+            self::add_category($category->id, $category->name, $category->parent_id);
         }
     
         foreach ($categories_to_update as $category) {
@@ -57,23 +57,23 @@ class Database {
         self::$connection->close();
     }
 
-    public static function add_category($name, $parent_id) {
+    public static function add_category($id, $name, $parent_id) {
         self::connect();
-        $parent_id = self::check_on_null($parent_id);
-        $query = "INSERT INTO categories (name, parent_id) VALUES ('$name', $parent_id)";
+        $parent_id = self::convert_to_sql_null($parent_id);
+        $query = "INSERT INTO categories (id, name, parent_id) VALUES ($id, '$name', $parent_id)";
         self::$connection->query($query);
         self::$connection->close();
     }
 
     public static function update_category($id, $name, $parent_id) {
         self::connect();
-        $parent_id = self::check_on_null($parent_id);
+        $parent_id = self::convert_to_sql_null($parent_id);
         $query = "UPDATE categories SET name='$name', parent_id=$parent_id WHERE id=$id";
         self::$connection->query($query);
         self::$connection->close();
     }
 
-    public static function check_on_null($parent_id) {
-        return $parent_id == null ? "NULL" : $parent_id;
+    public static function convert_to_sql_null($parent_id) {
+        return $parent_id == null ? 'NULL' : $parent_id;
     }
 }

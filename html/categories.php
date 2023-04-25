@@ -1,5 +1,5 @@
 <?php
-include "database.php";
+require 'database.php';
 class Category {
     public int $id;
     public string $name;
@@ -11,7 +11,12 @@ class Category {
         $this->parent_id = $parent_id;
     }
     public function print($level = 0) {
-        echo "<p>" . str_repeat("&nbsp;", $level * 4) . "– " . $this->name . "</p>";
+        $indent = str_repeat("&nbsp;", $level * 4);
+        echo "<p>$indent – <a href=\"category.php?id=$this->id\">$this->name</a></p>";
+    }
+
+    public function has_parent() {
+        return $this->parent_id !== null ? true : false;
     }
 }
 
@@ -27,7 +32,7 @@ class Categories {
             if ($category->parent_id == $parent_id) {
                 $category->print($level);
                 unset($this->categories[$index]);
-                if ($this->has_child_category($category->id)) 
+                if ($this->has_child_category($category->id))
                     $this->print_tree($category->id, $level + 1);
             }
         }
@@ -40,6 +45,7 @@ class Categories {
         }
         return false;
     }
+
     private function get_max_parent_id() {
         $max = null;
         foreach ($this->categories as $category) {
@@ -51,10 +57,32 @@ class Categories {
 
     public function add_random_category() {
         $id = count($this->categories) + 1;
-        $name = "Категория " . $id;
-        $parent_id = $this->get_max_parent_id() == null 
-        ? null : rand(1, $this->get_max_parent_id());
+        $name = "Категория $id";
+        $max_parent_id = convert_null_to_zero($this->get_max_parent_id());
+        $parent_id = convert_zero_to_null(rand(0, $max_parent_id + 1));
+        if (count($this->categories) === 0)
+            $parent_id = null;
         array_push($this->categories, new Category($id, $name, $parent_id));
+    }
+
+    public function get_category_full_path($id) {
+        $path = array();
+        $category = $this->get_category_by_id($id);
+        array_push($path, $category);
+        if ($category->has_parent()) {
+            $parent_path = $this->get_category_full_path($category->parent_id);
+            $path = array_merge($parent_path, $path);
+        }
+        return $path;
+    }
+
+    public function get_category_by_id($id) {
+        foreach ($this->categories as $category) {
+            if ($category->id == $id) {
+                return $category;
+            }
+        }
+        return null;
     }
 
     public function delete_all_categories() {
@@ -62,23 +90,35 @@ class Categories {
     }
 }
 
-$categories = new Categories();
-
-if (isset($_POST["add_one"])) {
-    $categories->add_random_category($categories);
-    Database::update_categories($categories->categories);
+function convert_null_to_zero($number) {
+    return $number === null ? 0 : $number;
 }
 
-if (isset($_POST["add_many"])) {
+function convert_zero_to_null($number) {
+    return $number === 0 ? null : $number;
+}
+
+$categories = new Categories();
+
+if (isset($_POST['add_one'])) {
+    $categories->add_random_category($categories);
+    Database::update_categories($categories->categories);
+    header("Location: index.php");
+}
+
+elseif (isset($_POST['add_many'])) {
     for ($i = 0; $i < 5000; $i++) {
         $categories->add_random_category($categories);
     }
     Database::update_categories($categories->categories);
+    header("Location: index.php");
 }
 
-if (isset($_POST["delete_many"])) {
+elseif (isset($_POST['delete_many'])) {
     $categories->delete_all_categories($categories);
     Database::update_categories($categories->categories);
+    header("Location: index.php");
 }
 
-$categories->print_tree();
+else
+    $categories->print_tree();
