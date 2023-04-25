@@ -1,0 +1,19 @@
+body {
+    margin: 10px;
+    background: rgb(190, 190, 190);
+}
+
+div#categories {
+    margin: 10px;
+    border-radius: 10px;
+    background: rgb(75, 75, 75);
+}
+
+p {
+    font-size: medium;
+    margin: 10px;
+}
+
+p#title {
+    font-size:x-large
+}

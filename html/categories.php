@@ -12,7 +12,8 @@ class Category {
     }
     public function print(int $level = 0) {
         $indent = str_repeat("&nbsp;", $level * 4);
-        echo "<p>$indent – <a href=\"category.php?id=$this->id\">$this->name</a></p>";
+        echo "<p>$indent – 
+        <a href=\"category.php?id=$this->id\">$this->name</a></p>";
     }
 
     public function has_parent() {
@@ -61,7 +62,7 @@ class Categories {
         $parent_id = convert_zero_to_null(rand(0, $max_parent_id + 1));
         if (count($this->categories) === 0)
             $parent_id = null;
-        $name = "Категория {$this->get_category_number($id, $parent_id)}";
+        $name = "Категория {$this->get_category_number($parent_id)}";
         array_push($this->categories, new Category($id, $name, $parent_id));
     }
 
@@ -89,7 +90,7 @@ class Categories {
         $this->categories = array();
     }
 
-    public function get_category_number($id, $parent_id) {
+    public function get_category_number($parent_id) {
         $number = '';
         $categories = array_filter($this->categories, 
         function ($category) use ($parent_id) {
