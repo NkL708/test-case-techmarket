@@ -9,7 +9,7 @@
 <body>
     <div>
         <p>Древовидная структура:</p>
-        <?php include "categories.php" ?>
+        <?php include "categories_form.php" ?>
     </div>
     <form method="POST" action="categories.php">
         <button name="add_one">Добавить 1 случайную категорию</button>

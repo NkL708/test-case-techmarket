@@ -97,28 +97,3 @@ function convert_null_to_zero($number) {
 function convert_zero_to_null($number) {
     return $number === 0 ? null : $number;
 }
-
-$categories = new Categories();
-
-if (isset($_POST['add_one'])) {
-    $categories->add_random_category($categories);
-    Database::update_categories($categories->categories);
-    header("Location: index.php");
-}
-
-elseif (isset($_POST['add_many'])) {
-    for ($i = 0; $i < 5000; $i++) {
-        $categories->add_random_category($categories);
-    }
-    Database::update_categories($categories->categories);
-    header("Location: index.php");
-}
-
-elseif (isset($_POST['delete_many'])) {
-    $categories->delete_all_categories($categories);
-    Database::update_categories($categories->categories);
-    header("Location: index.php");
-}
-
-else
-    $categories->print_tree();
