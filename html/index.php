@@ -11,7 +11,7 @@
         <p>Древовидная структура:</p>
         <?php include "categories_form.php" ?>
     </div>
-    <form method="POST" action="categories.php">
+    <form method="POST" action="categories_form.php">
         <button name="add_one">Добавить 1 случайную категорию</button>
         <button name="add_many">Добавить 5000 случайных категорий</button>
         <button name="delete_many">Удалить всё</button>

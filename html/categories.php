@@ -10,7 +10,7 @@ class Category {
         $this->name = $name;
         $this->parent_id = $parent_id;
     }
-    public function print($level = 0) {
+    public function print(int $level = 0) {
         $indent = str_repeat("&nbsp;", $level * 4);
         echo "<p>$indent – <a href=\"category.php?id=$this->id\">$this->name</a></p>";
     }
@@ -27,7 +27,7 @@ class Categories {
         $this->categories = Database::get_categories();
     }
 
-    public function print_tree($parent_id = 0, $level = 0) {
+    public function print_tree($parent_id = 0, int $level = 0) {
         foreach ($this->categories as $index => $category) {
             if ($category->parent_id == $parent_id) {
                 $category->print($level);
@@ -38,9 +38,9 @@ class Categories {
         }
     }
     
-    public function has_child_category($category_id) {
+    public function has_child_category(int $id) {
         foreach ($this->categories as $category) {
-            if ($category->parent_id == $category_id)
+            if ($category->parent_id == $id)
                 return true;
         }
         return false;
@@ -57,15 +57,15 @@ class Categories {
 
     public function add_random_category() {
         $id = count($this->categories) + 1;
-        $name = "Категория $id";
         $max_parent_id = convert_null_to_zero($this->get_max_parent_id());
         $parent_id = convert_zero_to_null(rand(0, $max_parent_id + 1));
         if (count($this->categories) === 0)
             $parent_id = null;
+        $name = "Категория {$this->get_category_number($id, $parent_id)}";
         array_push($this->categories, new Category($id, $name, $parent_id));
     }
 
-    public function get_category_full_path($id) {
+    public function get_category_full_path(int $id) {
         $path = array();
         $category = $this->get_category_by_id($id);
         array_push($path, $category);
@@ -87,6 +87,23 @@ class Categories {
 
     public function delete_all_categories() {
         $this->categories = array();
+    }
+
+    public function get_category_number($id, $parent_id) {
+        $number = '';
+        $categories = array_filter($this->categories, 
+        function ($category) use ($parent_id) {
+            return $category->parent_id === $parent_id;
+        });
+        $current_level_number = count($categories) + 1;
+        $parent_category = $this->get_category_by_id($parent_id);
+        if ($parent_category) {
+            $parent_number = str_replace('Категория', '', $parent_category->name);
+            $number = "{$parent_number}-{$current_level_number}";
+        }
+        else
+            $number = $current_level_number;
+        return $number;
     }
 }
 

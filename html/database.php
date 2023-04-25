@@ -57,7 +57,7 @@ class Database {
         self::$connection->close();
     }
 
-    public static function add_category($id, $name, $parent_id) {
+    public static function add_category(int $id, string $name, $parent_id) {
         self::connect();
         $parent_id = self::convert_to_sql_null($parent_id);
         $query = "INSERT INTO categories (id, name, parent_id) VALUES ($id, '$name', $parent_id)";
@@ -65,7 +65,7 @@ class Database {
         self::$connection->close();
     }
 
-    public static function update_category($id, $name, $parent_id) {
+    public static function update_category(int $id, string $name, $parent_id) {
         self::connect();
         $parent_id = self::convert_to_sql_null($parent_id);
         $query = "UPDATE categories SET name='$name', parent_id=$parent_id WHERE id=$id";
